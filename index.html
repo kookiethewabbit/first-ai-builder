@@ -77,8 +77,21 @@
   .crew { display: flex; justify-content: center; gap: .75rem; margin-top: 1rem; }
   .mh { width: clamp(4rem, 20vw, 6rem); height: clamp(4rem, 20vw, 6rem); }
   .small { font-size: .95rem; }
+  .crew figure { margin: 0; text-align: center; }
+  .crew figcaption { font-weight: bold; font-size: 1.15rem; }
   .list .btn { margin-top: .5rem; }
-  #gMsg { min-height: 1.6rem; font-weight: bold; }
+  #gMsg, .gm { min-height: 1.6rem; font-weight: bold; }
+  #quiz { background: var(--blue-t); }
+  #games { background: var(--yellow-t); }
+  #qText { font-size: 1.3rem; min-height: 2rem; }
+  .qc { font-size: 1.6rem; min-width: 4.5rem; }
+  [hidden] { display: none !important; }
+  .rhyme { margin: 0 0 .25rem; }
+  section.fold > h2 { cursor: pointer; margin: 0; }
+  section.fold > h2::after { content: "\2212"; margin-left: auto; font-size: 2rem; line-height: 1; }
+  section.fold.closed > h2::after { content: "+"; }
+  section.fold:not(.closed) > h2 { margin-bottom: .6rem; }
+  section.fold.closed > :not(h2) { display: none; }
 </style>
 </head>
 <body>
@@ -112,17 +125,18 @@
   <div class="wrap">
     <h1 aria-label="QuestX"><span>Quest</span><span>X</span></h1>
     <p>Tracing, sounds, books and games for 5-year-olds.</p>
-    <div class="crew" role="img" aria-label="Three friendly mascots">
-      <svg class="mh"><use href="#m-red"/></svg>
-      <svg class="mh"><use href="#m-blue"/></svg>
-      <svg class="mh"><use href="#m-yellow"/></svg>
+    <div class="crew">
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-red"/></svg><figcaption>Rosie</figcaption></figure>
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-blue"/></svg><figcaption>Bo</figcaption></figure>
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-yellow"/></svg><figcaption>Pip</figcaption></figure>
     </div>
-    <p class="small">[Write your mascots' names and one line about each.]</p>
   </div>
 </header>
 
 <nav aria-label="Sections">
   <ul>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#games">Games</a></li>
     <li><a href="#books">Books</a></li>
     <li><a href="#upper">ABC</a></li>
     <li><a href="#lower">abc</a></li>
@@ -133,6 +147,35 @@
 </nav>
 
 <main class="wrap">
+
+  <section id="quiz">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Quick check</h2>
+    <p>Answer 6 quick questions. It is not a grade.</p>
+    <p class="small" id="qProg"></p>
+    <p id="qText"></p>
+    <div class="row" id="qChoices"></div>
+    <div class="row">
+      <button class="btn" id="qHear" type="button">Hear the question</button>
+      <button class="btn" id="qStart" type="button">Start the quick check</button>
+    </div>
+    <div id="qRes" hidden></div>
+  </section>
+
+  <section id="games">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Literacy games</h2>
+    <ul class="list">
+      <li id="gameBox">
+        <h3>Sound match</h3>
+        <p id="gQ">Press Start to play.</p>
+        <div class="row" id="gChoices"></div>
+        <p id="gMsg" aria-live="polite"></p>
+        <div class="row"><button class="btn" id="gHear" type="button">Hear the letter</button><button class="btn" id="gNext" type="button">Start</button></div>
+        <p class="small" id="gScore">Stars: 0</p>
+      </li>
+      <li id="gRhyme"><h3>Rhyme match</h3><p class="gq">Press Start to play.</p><div class="row gc"></div><p class="gm" aria-live="polite"></p><div class="row"><button class="btn gh" type="button">Hear it</button><button class="btn gn" type="button">Start</button></div><p class="small gs">Stars: 0</p></li>
+      <li id="gPair"><h3>Letter partners</h3><p class="gq">Press Start to play.</p><div class="row gc"></div><p class="gm" aria-live="polite"></p><div class="row"><button class="btn gh" type="button">Hear it</button><button class="btn gn" type="button">Start</button></div><p class="small gs">Stars: 0</p></li>
+    </ul>
+  </section>
 
   <section id="books">
     <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Books</h2>
@@ -161,10 +204,12 @@
 
   <section id="rhymes">
     <h2><svg class="mm" aria-hidden="true"><use href="#m-red"/></svg>Rhymes</h2>
+    <p>Old nursery rhymes that are in the public domain.</p>
     <ul class="list">
-      <li><h3>[Rhyme title 1]</h3><p>[Write the rhyme here.]</p></li>
-      <li><h3>[Rhyme title 2]</h3><p>[Write the rhyme here.]</p></li>
-      <li><h3>[Rhyme title 3]</h3><p>[Write the rhyme here.]</p></li>
+      <li><h3>Humpty Dumpty</h3><p class="rhyme">Humpty Dumpty sat on a wall,<br>Humpty Dumpty had a great fall.<br>All the king's horses and all the king's men<br>Couldn't put Humpty together again.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Twinkle, Twinkle, Little Star</h3><p class="rhyme">Twinkle, twinkle, little star,<br>How I wonder what you are!<br>Up above the world so high,<br>Like a diamond in the sky.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Jack and Jill</h3><p class="rhyme">Jack and Jill went up the hill<br>To fetch a pail of water.<br>Jack fell down and broke his crown,<br>And Jill came tumbling after.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Hickory Dickory Dock</h3><p class="rhyme">Hickory, dickory, dock!<br>The mouse ran up the clock.<br>The clock struck one,<br>The mouse ran down,<br>Hickory, dickory, dock.</p><button class="btn rh" type="button">Hear it</button></li>
     </ul>
   </section>
 
@@ -175,7 +220,15 @@
       <canvas id="guide" aria-hidden="true"></canvas>
       <canvas id="draw" role="img" aria-label="Tracing area. Draw with your finger."></canvas>
     </div>
-    <div class="row"><button class="btn" id="clear" type="button">Start over</button></div>
+    <p id="tMsg" class="gm" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="check" type="button">Check my tracing</button><button class="btn" id="clear" type="button">Start over</button></div>
+    <div id="nextBox" class="big" hidden>
+      <strong id="nextLetter"></strong>
+      <div>
+        <p id="nextTxt"></p>
+        <div class="row"><button class="btn" id="nextHear" type="button">Hear it</button><button class="btn" id="nextBtn" type="button">Trace it</button></div>
+      </div>
+    </div>
     <label for="nameIn">Trace a name (up to 10 letters)</label>
     <div class="row">
       <input id="nameIn" type="text" maxlength="10" autocomplete="off" autocapitalize="words" spellcheck="false">
@@ -195,31 +248,21 @@
         <div class="row"><button class="btn" id="hear" type="button">Hear the letter</button><button class="btn" id="hearW" type="button">Hear the word</button></div>
       </div>
     </div>
-    <h3>Literacy games</h3>
-    <ul class="list">
-      <li id="gameBox">
-        <h3>Sound match</h3>
-        <p id="gQ">Press Start to play.</p>
-        <div class="row" id="gChoices"></div>
-        <p id="gMsg" aria-live="polite"></p>
-        <div class="row"><button class="btn" id="gHear" type="button">Hear the letter</button><button class="btn" id="gNext" type="button">Start</button></div>
-        <p class="small" id="gScore">Stars: 0</p>
-      </li>
-      <li><h3>[Game 2 name]</h3><p>[Describe the game in one sentence.]</p></li>
-      <li><h3>[Game 3 name]</h3><p>[Describe the game in one sentence.]</p></li>
-    </ul>
+
   </section>
 
 </main>
 
 <footer>
-  <div class="wrap">[Write your footer line here.]</div>
+  <div class="wrap">Thank you! Made for STEMnovation.</div>
 </footer>
 
 <script>
 (function () {
   var ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
-  var cur = "A", guide = "A";
+  var cur = "s", guide = "s";
+  var ORDER = "satipnckehrmdgoulfbjzwvyxq".split(""), nextCh = null;
+  var segs = [], timer = null, gfont = "", gfs = 0, gStart = null;
   var SND = "a,b,k,d,e,f,g,h,i,j,k,l,m,n,o,p,kw,r,s,t,u,v,w,ks,y,z".split(",");
   var WORDS = "apple,ball,cat,dog,egg,fish,goat,hat,igloo,jam,kite,lion,moon,nest,octopus,pig,queen,rabbit,sun,tiger,umbrella,van,web,x-ray,yak,zebra".split(",");
   var UP = "clrlllrlcollllololrcllllll", LO = "rlrrmorlcclcllolrlrcllllll";
@@ -257,6 +300,8 @@
     g.font = font(fs);
     var m = g.measureText(guide).width;
     if (m > w * 0.92) { fs = fs * w * 0.92 / m; g.font = font(fs); }
+    gfont = g.font;
+    gfs = fs;
     g.textAlign = "center";
     g.textBaseline = "middle";
     g.fillStyle = "#f1ece0";
@@ -266,6 +311,7 @@
     g.lineCap = "round";
     g.strokeStyle = "#7d879e";
     g.strokeText(guide, w / 2, h / 2);
+    gStart = null;
     if (guide.length === 1) {
       var up = guide === guide.toUpperCase();
       var f = START[(up ? UP : LO).charAt(ALPHA.indexOf(guide.toUpperCase()))];
@@ -273,6 +319,7 @@
       var L = w / 2 - mm.actualBoundingBoxLeft, R = w / 2 + mm.actualBoundingBoxRight;
       var T = h / 2 - mm.actualBoundingBoxAscent, B = h / 2 + mm.actualBoundingBoxDescent;
       var x = L + f[0] * (R - L), y = T + f[1] * (B - T);
+      gStart = [x, y];
       g.setLineDash([]);
       g.beginPath();
       g.arc(x, y, 14, 0, Math.PI * 2);
@@ -288,6 +335,7 @@
   }
 
   function size() {
+    segs = [];
     var r = gc.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
     [gc, dc].forEach(function (c) {
       c.width = Math.round(r.width * dpr);
@@ -302,7 +350,92 @@
     drawGuide();
   }
 
-  function clearDraw() { d.clearRect(0, 0, dc.clientWidth, dc.clientHeight); }
+  function clearDraw() {
+    d.clearRect(0, 0, dc.clientWidth, dc.clientHeight);
+    segs = [];
+    clearTimeout(timer);
+    document.getElementById("tMsg").textContent = "";
+    document.getElementById("nextBox").hidden = true;
+  }
+
+  function soundNote(U) {
+    var i = ALPHA.indexOf(U);
+    return U === "X" ? "X makes the sound /ks/, like at the end of box." : U + " makes the sound /" + SND[i] + "/, like in " + WORDS[i] + ".";
+  }
+
+  function showNext() {
+    if (guide.length !== 1) return;
+    var k = ORDER.indexOf(guide.toLowerCase()), up = guide === guide.toUpperCase();
+    if (k < 0) return;
+    var last = k === ORDER.length - 1;
+    nextCh = last ? null : (up ? ORDER[k + 1].toUpperCase() : ORDER[k + 1]);
+    document.getElementById("nextLetter").textContent = last ? "\u2605" : nextCh;
+    document.getElementById("nextTxt").textContent = last ? "You traced every letter! Amazing!" : "Meet the next letter! " + soundNote(nextCh.toUpperCase());
+    document.getElementById("nextHear").hidden = last;
+    document.getElementById("nextBtn").hidden = last;
+    document.getElementById("nextBox").hidden = false;
+  }
+
+  function traceScore() {
+    var w = gc.clientWidth, h = gc.clientHeight, S = 0.3;
+    function mk() {
+      var c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(w * S));
+      c.height = Math.max(1, Math.round(h * S));
+      var x = c.getContext("2d");
+      x.setTransform(S, 0, 0, S, 0, 0);
+      x.lineCap = "round";
+      x.lineJoin = "round";
+      x.font = gfont;
+      x.textAlign = "center";
+      x.textBaseline = "middle";
+      x.fillStyle = "#000";
+      x.strokeStyle = "#000";
+      return x;
+    }
+    function ink(x, lw) {
+      x.lineWidth = lw;
+      segs.forEach(function (q) { x.beginPath(); x.moveTo(q[0], q[1]); x.lineTo(q[2], q[3]); x.stroke(); });
+    }
+    function px(x) { var c = x.canvas; return x.getImageData(0, 0, c.width, c.height).data; }
+    var L = mk(), K = mk(), Z = mk(), T = mk(), F = mk(), O = mk();
+    L.fillText(guide, w / 2, h / 2);
+    K.fillText(guide, w / 2, h / 2);
+    K.globalCompositeOperation = "destination-out";
+    K.lineWidth = gfs * 0.09;
+    K.strokeText(guide, w / 2, h / 2);
+    Z.fillText(guide, w / 2, h / 2);
+    Z.lineWidth = gfs * 0.12;
+    Z.strokeText(guide, w / 2, h / 2);
+    O.lineWidth = 1 / S;
+    O.strokeText(guide, w / 2, h / 2);
+    ink(T, 6);
+    ink(F, gfs * 0.13 + 14);
+    var k = px(K), l = px(L), z = px(Z), t = px(T), f = px(F), core = 0, cov = 0, inkN = 0, inZ = 0, i;
+    for (i = 3; i < k.length; i += 4) if (k[i] > 40) core++;
+    var tgt = core < 20 ? l : k;
+    core = 0;
+    for (i = 3; i < tgt.length; i += 4) {
+      if (tgt[i] > 40) { core++; if (f[i] > 40) cov++; }
+      if (t[i] > 40) { inkN++; if (z[i] > 40) inZ++; }
+    }
+    var o = px(O), oc = 0, len = 0;
+    for (i = 3; i < o.length; i += 4) if (o[i] > 40) oc++;
+    segs.forEach(function (q) { len += Math.hypot(q[2] - q[0], q[3] - q[1]); });
+    return { c: core ? cov / core : 0, acc: inkN ? inZ / inkN : 0, len: len, outLen: oc / S };
+  }
+
+  function evalTrace() {
+    var msg = document.getElementById("tMsg");
+    if (!segs.length) { msg.textContent = "Use your finger to trace the letter."; return; }
+    var r = traceScore();
+    if (gStart && Math.hypot(segs[0][0] - gStart[0], segs[0][1] - gStart[1]) > 45) msg.textContent = "Start at the red dot!";
+    else if (r.len > 3 * r.outLen) msg.textContent = "Slow down! Follow the dots.";
+    else if (r.c >= 0.9 && r.acc >= 0.93) { msg.textContent = "\u2605 Great tracing! You did it!"; say("Great job!"); showNext(); }
+    else if (r.acc < 0.85) msg.textContent = "Good try! Stay on the dots.";
+    else if (r.c < 0.9) msg.textContent = "Keep going! Follow all the dots.";
+    else msg.textContent = "Nice! Try again, slow and neat.";
+  }
 
   function pick(ch) {
     cur = ch;
@@ -331,6 +464,8 @@
     d.moveTo(last[0], last[1]);
     d.lineTo(last[0] + 0.1, last[1]);
     d.stroke();
+    segs.push([last[0], last[1], last[0] + 0.1, last[1]]);
+    clearTimeout(timer);
     e.preventDefault();
   });
   dc.addEventListener("pointermove", function (e) {
@@ -340,13 +475,24 @@
     d.moveTo(last[0], last[1]);
     d.lineTo(p[0], p[1]);
     d.stroke();
+    segs.push([last[0], last[1], p[0], p[1]]);
     last = p;
   });
   ["pointerup", "pointercancel"].forEach(function (ev) {
-    dc.addEventListener(ev, function () { down = false; });
+    dc.addEventListener(ev, function () {
+      if (!down) return;
+      down = false;
+      clearTimeout(timer);
+      timer = setTimeout(evalTrace, 900);
+    });
   });
 
   document.getElementById("clear").addEventListener("click", clearDraw);
+  document.getElementById("nextBtn").addEventListener("click", function () { if (nextCh) pick(nextCh); });
+  document.getElementById("nextHear").addEventListener("click", function () {
+    if (nextCh) say(nextCh.toUpperCase() + ". " + WORDS[ALPHA.indexOf(nextCh.toUpperCase())]);
+  });
+  document.getElementById("check").addEventListener("click", function () { clearTimeout(timer); evalTrace(); });
 
   document.getElementById("nameBtn").addEventListener("click", function () {
     var v = document.getElementById("nameIn").value.replace(/[^A-Za-z]/g, "").slice(0, 10);
@@ -397,12 +543,149 @@
   gNext.addEventListener("click", round);
   document.getElementById("gHear").addEventListener("click", function () { say(ALPHA[target]); });
 
+  document.querySelectorAll(".rh").forEach(function (b) {
+    b.addEventListener("click", function () { say(b.previousElementSibling.innerText); });
+  });
+
+  var RH = [["cat","hat","dog","sun"],["pig","wig","cup","bed"],["moon","spoon","tree","fish"],["bug","rug","hat","pen"],["bell","shell","car","box"]];
+  var SK = ["Uppercase letters", "Lowercase letters", "Letter sounds", "Rhymes"], SKL = ["#upper", "#lower", "#phonics", "#rhymes"];
+  var qs = [], qi = 0, sc = [0, 0, 0, 0];
+  var qProg = document.getElementById("qProg"), qText = document.getElementById("qText"), qCh = document.getElementById("qChoices"), qRes = document.getElementById("qRes");
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  function shuf(a) { return a.sort(function () { return Math.random() - 0.5; }); }
+  function pickN(n, skip) {
+    var o = [];
+    while (o.length < n) { var r = rnd(26); if (skip.indexOf(r) < 0 && o.indexOf(r) < 0) o.push(r); }
+    return o;
+  }
+  function buildQuiz() {
+    qs = [];
+    [0, 1].forEach(function (k) {
+      pickN(1, []).forEach(function (t) {
+        var ch = function (n) { return k ? ALPHA[n].toLowerCase() : ALPHA[n]; };
+        qs.push({ s: k, text: "Tap the letter " + ch(t) + ".", say: "Tap the letter " + ALPHA[t], opts: shuf([t].concat(pickN(2, [t]))).map(ch), ans: ch(t) });
+      });
+    });
+    pickN(2, [23]).forEach(function (t) {
+      qs.push({ s: 2, text: "Which letter does \"" + WORDS[t] + "\" start with?", say: "Which letter does " + WORDS[t] + " start with?", opts: shuf([t].concat(pickN(2, [t]))).map(function (n) { return ALPHA[n]; }), ans: ALPHA[t] });
+    });
+    shuf(RH.slice()).slice(0, 2).forEach(function (r) {
+      var o = shuf(r.slice(1));
+      qs.push({ s: 3, text: "Which word rhymes with " + r[0] + "?", say: "Which word rhymes with " + r[0] + "? " + o.join(", "), opts: o, ans: r[1] });
+    });
+    shuf(qs);
+  }
+  function showQ() {
+    var q = qs[qi];
+    qProg.textContent = "Question " + (qi + 1) + " of " + qs.length;
+    qText.textContent = q.text;
+    qCh.innerHTML = "";
+    q.opts.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn qc";
+      b.textContent = o;
+      b.addEventListener("click", function () {
+        if (o === q.ans) sc[q.s]++;
+        qi++;
+        if (qi < qs.length) showQ(); else finishQ();
+      });
+      qCh.appendChild(b);
+    });
+  }
+  function finishQ() {
+    qProg.textContent = "All done! Great work.";
+    qText.textContent = "";
+    qCh.innerHTML = "";
+    var h = '<ul class="list" style="margin-top:.75rem">';
+    SK.forEach(function (n, i) {
+      var tot = [1, 1, 2, 2][i], v = sc[i], msg = v === tot ? "Strong. Great job!" : v > 0 ? "Growing. A little more practice." : "Practice this one next.";
+      h += "<li><h3>" + n + ": " + v + " of " + tot + "</h3><p>" + msg + "</p>" + (v < tot ? '<a class="btn" href="' + SKL[i] + '">Practice ' + n.toLowerCase() + "</a>" : "") + "</li>";
+    });
+    h += '</ul><p class="small" style="margin-top:.75rem">This is a quick check, not an official test. [Write a note for grown-ups about what to do with these results.]</p>';
+    qRes.innerHTML = h;
+    qRes.hidden = false;
+  }
+  document.getElementById("qStart").addEventListener("click", function () {
+    buildQuiz();
+    qi = 0;
+    sc = [0, 0, 0, 0];
+    qRes.hidden = true;
+    this.textContent = "Start over";
+    showQ();
+  });
+  document.getElementById("qHear").addEventListener("click", function () { if (qs[qi]) say(qs[qi].say); });
+
+  function game(id, gen) {
+    var box = document.getElementById(id), q = box.querySelector(".gq"), ch = box.querySelector(".gc"), msg = box.querySelector(".gm");
+    var nx = box.querySelector(".gn"), hr = box.querySelector(".gh"), sc = box.querySelector(".gs");
+    var stars = 0, cur = null, done = false;
+    function next() {
+      cur = gen();
+      done = false;
+      ch.innerHTML = "";
+      cur.opts.forEach(function (o) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn qc";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          say(o);
+          if (o === cur.ans) {
+            if (!done) { stars++; done = true; }
+            msg.textContent = cur.ok;
+            sc.textContent = "Stars: " + stars;
+          } else {
+            msg.textContent = "Try again!";
+          }
+        });
+        ch.appendChild(b);
+      });
+      q.textContent = cur.text;
+      msg.textContent = "";
+      nx.textContent = "Next";
+    }
+    nx.addEventListener("click", next);
+    hr.addEventListener("click", function () { if (cur) say(cur.say); });
+  }
+  game("gRhyme", function () {
+    var r = RH[rnd(RH.length)], o = shuf(r.slice(1)), t = "Which word rhymes with " + r[0] + "?";
+    return { text: t, say: t + " " + o.join(", "), opts: o, ans: r[1], ok: "Yes! " + r[0] + " rhymes with " + r[1] + "." };
+  });
+  game("gPair", function () {
+    var t = rnd(26), lo = function (n) { return ALPHA[n].toLowerCase(); };
+    return { text: "Find the little letter that goes with " + ALPHA[t] + ".", say: "Find the lowercase letter that goes with " + ALPHA[t], opts: shuf([t].concat(pickN(2, [t]))).map(lo), ans: lo(t), ok: "Yes! " + ALPHA[t] + " and " + lo(t) + " are partners." };
+  });
+
   buildGrid("gridU", false, false);
   buildGrid("gridL", true, false);
   buildGrid("gridP", false, true);
+  function openSec(sec, open) {
+    sec.classList.toggle("closed", !open);
+    sec.firstElementChild.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open && sec.id === "trace") size();
+  }
+  document.querySelectorAll("section").forEach(function (sec) {
+    var h = sec.firstElementChild;
+    sec.classList.add("fold");
+    h.setAttribute("role", "button");
+    h.setAttribute("tabindex", "0");
+    openSec(sec, sec.id === "quiz");
+    function tog() { openSec(sec, sec.classList.contains("closed")); }
+    h.addEventListener("click", tog);
+    h.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); }
+    });
+  });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var sec = document.getElementById(a.getAttribute("href").slice(1));
+    if (sec && sec.classList.contains("fold")) openSec(sec, true);
+  });
   window.addEventListener("resize", size);
   size();
-  pick("A");
+  pick("s");
 })();
 </script>
 
