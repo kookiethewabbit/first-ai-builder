@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuestX Letters</title>
+<style>
+  :root {
+    --bg: #f7f5ef;
+    --ink: #2b3550;
+    --red: #d98a80;
+    --blue: #86abd2;
+    --yellow: #ebd07a;
+    --red-t: #f6dcd8;
+    --blue-t: #dce8f4;
+    --yellow-t: #f8efc9;
+    --font: "Arial Rounded MT Bold", "Trebuchet MS", Verdana, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 1.1rem; line-height: 1.55; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1rem; }
+
+  header { padding: 2rem 0 1.25rem; text-align: center; }
+  header h1 { margin: 0; font-size: clamp(2.6rem, 13vw, 4.5rem); line-height: 1; letter-spacing: .02em; }
+  header h1 span:nth-child(1) { color: var(--red); }
+  header h1 span:nth-child(2) { color: var(--blue); }
+  header h1 span:nth-child(3) { color: var(--yellow); }
+  header p { margin: .6rem 0 0; font-size: 1.15rem; }
+
+  nav { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 3px solid var(--ink); }
+  nav ul { list-style: none; margin: 0; padding: .6rem 1rem; display: flex; gap: .5rem; overflow-x: auto; }
+  nav a { display: block; white-space: nowrap; padding: .5rem 1rem; border: 3px solid var(--ink); border-radius: 2rem; color: var(--ink); text-decoration: none; background: #fff; }
+  nav li:nth-child(3n+1) a { background: var(--red-t); }
+  nav li:nth-child(3n+2) a { background: var(--blue-t); }
+  nav li:nth-child(3n) a { background: var(--yellow-t); }
+
+  section { scroll-margin-top: 4.5rem; margin: 1.75rem 0; padding: 1.25rem; border: 3px solid var(--ink); border-radius: 1.5rem; box-shadow: 0 6px 0 var(--ink); }
+  #books, #rhymes { background: var(--blue-t); }
+  #upper, #trace { background: var(--yellow-t); }
+  #lower, #phonics { background: var(--red-t); }
+  h2 { margin: 0 0 .5rem; font-size: 1.8rem; line-height: 1.2; }
+  h3 { margin: 0 0 .25rem; font-size: 1.15rem; }
+  p { margin: 0 0 .75rem; }
+
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+  .list li { background: #fff; border: 3px solid var(--ink); border-radius: 1rem; padding: .8rem 1rem; }
+  .list p { margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr)); gap: .5rem; margin: .75rem 0; }
+  .block { font: inherit; font-size: 1.8rem; line-height: 1; aspect-ratio: 1; border: 3px solid var(--ink); border-radius: .8rem; color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--ink); }
+  .block:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .block.c0 { background: var(--red); }
+  .block.c1 { background: var(--blue); }
+  .block.c2 { background: var(--yellow); }
+  .block.on { outline: 4px solid var(--ink); outline-offset: 2px; }
+  .mini { font-size: 1.4rem; }
+
+  .btn { font: inherit; display: inline-block; padding: .6rem 1.2rem; border: 3px solid var(--ink); border-radius: 2rem; background: #fff; color: var(--ink); cursor: pointer; text-decoration: none; box-shadow: 0 4px 0 var(--ink); }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+  .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; background: #fff; border: 3px solid var(--ink); border-radius: 1rem; overflow: hidden; margin: .75rem 0; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #draw { touch-action: none; cursor: crosshair; }
+  .row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-bottom: .75rem; }
+  label { display: block; margin-bottom: .25rem; }
+  input[type=text] { font: inherit; width: 100%; max-width: 12rem; padding: .55rem .8rem; border: 3px solid var(--ink); border-radius: 1rem; background: #fff; color: var(--ink); }
+
+  .big { display: flex; align-items: center; gap: 1rem; background: #fff; border: 3px solid var(--ink); border-radius: 1rem; padding: .75rem 1rem; margin: .75rem 0; }
+  .big strong { font-size: 3.5rem; line-height: 1; }
+
+  footer { padding: 1rem 0 2.5rem; text-align: center; }
+  h2 { display: flex; align-items: center; gap: .6rem; }
+  .mm { width: 2.8rem; height: 2.8rem; flex: none; }
+  .crew { display: flex; justify-content: center; gap: .75rem; margin-top: 1rem; }
+  .mh { width: clamp(4rem, 20vw, 6rem); height: clamp(4rem, 20vw, 6rem); }
+  .small { font-size: .95rem; }
+  .list .btn { margin-top: .5rem; }
+  #gMsg { min-height: 1.6rem; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-red" viewBox="0 0 100 100">
+    <path d="M22 38 L20 10 L44 26Z M78 38 L80 10 L56 26Z" fill="#d98a80" stroke="#2b3550" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="50" cy="58" r="38" fill="#d98a80" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="37" cy="52" r="5" fill="#2b3550"/><circle cx="63" cy="52" r="5" fill="#2b3550"/>
+    <circle cx="50" cy="62" r="3.5" fill="#2b3550"/>
+    <path d="M42 68 Q50 77 58 68" fill="none" stroke="#2b3550" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-blue" viewBox="0 0 100 100">
+    <circle cx="22" cy="26" r="13" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="78" cy="26" r="13" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="50" cy="56" r="38" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <ellipse cx="50" cy="68" rx="17" ry="13" fill="#dce8f4" stroke="#2b3550" stroke-width="3"/>
+    <circle cx="37" cy="48" r="5" fill="#2b3550"/><circle cx="63" cy="48" r="5" fill="#2b3550"/>
+    <ellipse cx="50" cy="63" rx="5" ry="3.5" fill="#2b3550"/>
+    <path d="M44 72 Q50 78 56 72" fill="none" stroke="#2b3550" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-yellow" viewBox="0 0 100 100">
+    <path d="M42 22 Q44 6 50 4 Q56 6 58 22" fill="#ebd07a" stroke="#2b3550" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="50" cy="58" r="38" fill="#ebd07a" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="36" cy="50" r="5" fill="#2b3550"/><circle cx="64" cy="50" r="5" fill="#2b3550"/>
+    <path d="M42 60 L58 60 L50 74Z" fill="#d98a80" stroke="#2b3550" stroke-width="3" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <h1 aria-label="QuestX"><span>Quest</span><span>X</span></h1>
+    <p>Tracing, sounds, books and games for 5-year-olds.</p>
+    <div class="crew" role="img" aria-label="Three friendly mascots">
+      <svg class="mh"><use href="#m-red"/></svg>
+      <svg class="mh"><use href="#m-blue"/></svg>
+      <svg class="mh"><use href="#m-yellow"/></svg>
+    </div>
+    <p class="small">[Write your mascots' names and one line about each.]</p>
+  </div>
+</header>
+
+<nav aria-label="Sections">
+  <ul>
+    <li><a href="#books">Books</a></li>
+    <li><a href="#upper">ABC</a></li>
+    <li><a href="#lower">abc</a></li>
+    <li><a href="#rhymes">Rhymes</a></li>
+    <li><a href="#trace">Tracing</a></li>
+    <li><a href="#phonics">Phonics</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+  <section id="books">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Books</h2>
+    <p>Free books for 5-year-olds that are in the public domain.</p>
+    <ul class="list">
+      <li><h3>The Tale of Peter Rabbit</h3><p>Beatrix Potter &ndash; A little rabbit sneaks into a garden and has to find his way home.</p><a class="btn" href="https://www.gutenberg.org/ebooks/14304" target="_blank" rel="noopener">Read it free</a></li>
+      <li><h3>The Story of the Three Little Pigs</h3><p>L. Leslie Brooke &ndash; Three pigs build three houses, and a wolf huffs and puffs.</p><a class="btn" href="https://www.gutenberg.org/ebooks/18155" target="_blank" rel="noopener">Read it free</a></li>
+      <li><h3>The Tale of Squirrel Nutkin</h3><p>Beatrix Potter &ndash; A cheeky red squirrel visits an island of nuts and a wise old owl.</p><a class="btn" href="https://www.gutenberg.org/ebooks/14872" target="_blank" rel="noopener">Read it free</a></li>
+    </ul>
+    <p class="small" style="margin-top:.75rem">Grown-ups: these links open Project Gutenberg, where each book is listed as public domain in the USA. [Check the copyright rules for your country.]</p>
+  </section>
+
+  <section id="upper">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-red"/></svg>Uppercase letters</h2>
+    <p>Tap a letter to pick it.</p>
+    <div class="grid" id="gridU"></div>
+    <a class="btn" href="#trace">Trace this letter</a>
+  </section>
+
+  <section id="lower">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Lowercase letters</h2>
+    <p>Tap a letter to pick it.</p>
+    <div class="grid" id="gridL"></div>
+    <a class="btn" href="#trace">Trace this letter</a>
+  </section>
+
+  <section id="rhymes">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-red"/></svg>Rhymes</h2>
+    <ul class="list">
+      <li><h3>[Rhyme title 1]</h3><p>[Write the rhyme here.]</p></li>
+      <li><h3>[Rhyme title 2]</h3><p>[Write the rhyme here.]</p></li>
+      <li><h3>[Rhyme title 3]</h3><p>[Write the rhyme here.]</p></li>
+    </ul>
+  </section>
+
+  <section id="trace">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Tracing center</h2>
+    <p id="now">Trace the letter: A</p>
+    <div class="stage">
+      <canvas id="guide" aria-hidden="true"></canvas>
+      <canvas id="draw" role="img" aria-label="Tracing area. Draw with your finger."></canvas>
+    </div>
+    <div class="row"><button class="btn" id="clear" type="button">Start over</button></div>
+    <label for="nameIn">Trace a name (up to 10 letters)</label>
+    <div class="row">
+      <input id="nameIn" type="text" maxlength="10" autocomplete="off" autocapitalize="words" spellcheck="false">
+      <button class="btn" id="nameBtn" type="button">Trace name</button>
+    </div>
+    <p>[Write a note for grown-ups about how to use the tracing center.]</p>
+  </section>
+
+  <section id="phonics">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Phonics</h2>
+    <p>Pick a letter to learn its sound.</p>
+    <div class="grid" id="gridP"></div>
+    <div class="big">
+      <strong id="phLetter">Aa</strong>
+      <div>
+        <p id="phNote">[Write the sound for A and an example word.]</p>
+        <div class="row"><button class="btn" id="hear" type="button">Hear the letter</button><button class="btn" id="hearW" type="button">Hear the word</button></div>
+      </div>
+    </div>
+    <h3>Literacy games</h3>
+    <ul class="list">
+      <li id="gameBox">
+        <h3>Sound match</h3>
+        <p id="gQ">Press Start to play.</p>
+        <div class="row" id="gChoices"></div>
+        <p id="gMsg" aria-live="polite"></p>
+        <div class="row"><button class="btn" id="gHear" type="button">Hear the letter</button><button class="btn" id="gNext" type="button">Start</button></div>
+        <p class="small" id="gScore">Stars: 0</p>
+      </li>
+      <li><h3>[Game 2 name]</h3><p>[Describe the game in one sentence.]</p></li>
+      <li><h3>[Game 3 name]</h3><p>[Describe the game in one sentence.]</p></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">[Write your footer line here.]</div>
+</footer>
+
+<script>
+(function () {
+  var ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var cur = "A", guide = "A";
+  var SND = "a,b,k,d,e,f,g,h,i,j,k,l,m,n,o,p,kw,r,s,t,u,v,w,ks,y,z".split(",");
+  var WORDS = "apple,ball,cat,dog,egg,fish,goat,hat,igloo,jam,kite,lion,moon,nest,octopus,pig,queen,rabbit,sun,tiger,umbrella,van,web,x-ray,yak,zebra".split(",");
+  var UP = "clrlllrlcollllololrcllllll", LO = "rlrrmorlcclcllolrlrcllllll";
+  var START = { l: [0, 0], c: [.5, 0], r: [.85, .2], o: [.65, .05], m: [0, .5] };
+  function say(t) {
+    try {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t);
+      u.rate = 0.8;
+      window.speechSynthesis.speak(u);
+    } catch (err) {}
+  }
+  var gc = document.getElementById("guide"), dc = document.getElementById("draw");
+  var g = gc.getContext("2d"), d = dc.getContext("2d");
+
+  function buildGrid(id, lower, mini) {
+    var box = document.getElementById(id);
+    ALPHA.forEach(function (L, i) {
+      var ch = lower ? L.toLowerCase() : L;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "block c" + (i % 3) + (mini ? " mini" : "");
+      b.textContent = ch;
+      b.setAttribute("aria-label", (lower ? "Lowercase " : "Uppercase ") + L);
+      b.addEventListener("click", function () { pick(ch); });
+      box.appendChild(b);
+    });
+  }
+
+  function drawGuide() {
+    var w = gc.clientWidth, h = gc.clientHeight, fs = h * 0.85;
+    var font = function (s) { return "bold " + s + "px 'Arial Rounded MT Bold', 'Trebuchet MS', Verdana, sans-serif"; };
+    g.clearRect(0, 0, w, h);
+    g.font = font(fs);
+    var m = g.measureText(guide).width;
+    if (m > w * 0.92) { fs = fs * w * 0.92 / m; g.font = font(fs); }
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillStyle = "#f1ece0";
+    g.fillText(guide, w / 2, h / 2);
+    g.setLineDash([2, 12]);
+    g.lineWidth = 4;
+    g.lineCap = "round";
+    g.strokeStyle = "#7d879e";
+    g.strokeText(guide, w / 2, h / 2);
+    if (guide.length === 1) {
+      var up = guide === guide.toUpperCase();
+      var f = START[(up ? UP : LO).charAt(ALPHA.indexOf(guide.toUpperCase()))];
+      var mm = g.measureText(guide);
+      var L = w / 2 - mm.actualBoundingBoxLeft, R = w / 2 + mm.actualBoundingBoxRight;
+      var T = h / 2 - mm.actualBoundingBoxAscent, B = h / 2 + mm.actualBoundingBoxDescent;
+      var x = L + f[0] * (R - L), y = T + f[1] * (B - T);
+      g.setLineDash([]);
+      g.beginPath();
+      g.arc(x, y, 14, 0, Math.PI * 2);
+      g.fillStyle = "#d98a80";
+      g.fill();
+      g.lineWidth = 3;
+      g.strokeStyle = "#2b3550";
+      g.stroke();
+      g.fillStyle = "#2b3550";
+      g.font = "bold 16px Arial, sans-serif";
+      g.fillText("1", x, y + 1);
+    }
+  }
+
+  function size() {
+    var r = gc.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    [gc, dc].forEach(function (c) {
+      c.width = Math.round(r.width * dpr);
+      c.height = Math.round(r.height * dpr);
+    });
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    d.lineWidth = 14;
+    d.lineCap = "round";
+    d.lineJoin = "round";
+    d.strokeStyle = "#4f7fb0";
+    drawGuide();
+  }
+
+  function clearDraw() { d.clearRect(0, 0, dc.clientWidth, dc.clientHeight); }
+
+  function pick(ch) {
+    cur = ch;
+    guide = ch;
+    document.querySelectorAll(".block").forEach(function (b) {
+      var on = b.textContent === ch;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    var U = ch.toUpperCase();
+    document.getElementById("phLetter").textContent = U + U.toLowerCase();
+    var i = ALPHA.indexOf(U);
+    document.getElementById("phNote").textContent = U === "X" ? "X makes the sound /ks/, like at the end of box." : U + " makes the sound /" + SND[i] + "/, like in " + WORDS[i] + ".";
+    document.getElementById("now").textContent = "Trace the letter: " + ch + ". Start at the red dot.";
+    clearDraw();
+    drawGuide();
+  }
+
+  var down = false, last = null;
+  function pos(e) { var r = dc.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  dc.addEventListener("pointerdown", function (e) {
+    down = true;
+    dc.setPointerCapture(e.pointerId);
+    last = pos(e);
+    d.beginPath();
+    d.moveTo(last[0], last[1]);
+    d.lineTo(last[0] + 0.1, last[1]);
+    d.stroke();
+    e.preventDefault();
+  });
+  dc.addEventListener("pointermove", function (e) {
+    if (!down) return;
+    var p = pos(e);
+    d.beginPath();
+    d.moveTo(last[0], last[1]);
+    d.lineTo(p[0], p[1]);
+    d.stroke();
+    last = p;
+  });
+  ["pointerup", "pointercancel"].forEach(function (ev) {
+    dc.addEventListener(ev, function () { down = false; });
+  });
+
+  document.getElementById("clear").addEventListener("click", clearDraw);
+
+  document.getElementById("nameBtn").addEventListener("click", function () {
+    var v = document.getElementById("nameIn").value.replace(/[^A-Za-z]/g, "").slice(0, 10);
+    if (!v) return;
+    v = v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+    guide = v;
+    document.getElementById("now").textContent = "Trace the name: " + v;
+    clearDraw();
+    drawGuide();
+  });
+
+  document.getElementById("hear").addEventListener("click", function () { say(cur.toUpperCase()); });
+  document.getElementById("hearW").addEventListener("click", function () { say(WORDS[ALPHA.indexOf(cur.toUpperCase())]); });
+
+  var target = 0, score = 0, solved = false;
+  var gQ = document.getElementById("gQ"), gMsg = document.getElementById("gMsg"), gCh = document.getElementById("gChoices"), gNext = document.getElementById("gNext");
+  function round() {
+    target = Math.floor(Math.random() * 26);
+    solved = false;
+    var opts = [target];
+    while (opts.length < 3) {
+      var r = Math.floor(Math.random() * 26);
+      if (opts.indexOf(r) < 0) opts.push(r);
+    }
+    opts.sort(function () { return Math.random() - 0.5; });
+    gCh.innerHTML = "";
+    opts.forEach(function (n) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = WORDS[n];
+      b.addEventListener("click", function () {
+        say(WORDS[n]);
+        if (n === target) {
+          if (!solved) { score++; solved = true; }
+          gMsg.textContent = "Yes! " + ALPHA[target] + " is for " + WORDS[target] + ".";
+          document.getElementById("gScore").textContent = "Stars: " + score;
+        } else {
+          gMsg.textContent = "Try again!";
+        }
+      });
+      gCh.appendChild(b);
+    });
+    gQ.textContent = "Which word starts with the letter " + ALPHA[target] + "?";
+    gMsg.textContent = "";
+    gNext.textContent = "Next";
+  }
+  gNext.addEventListener("click", round);
+  document.getElementById("gHear").addEventListener("click", function () { say(ALPHA[target]); });
+
+  buildGrid("gridU", false, false);
+  buildGrid("gridL", true, false);
+  buildGrid("gridP", false, true);
+  window.addEventListener("resize", size);
+  size();
+  pick("A");
+})();
+</script>
+
+</body>
+</html>
