@@ -234,7 +234,7 @@
       <input id="nameIn" type="text" maxlength="10" autocomplete="off" autocapitalize="words" spellcheck="false">
       <button class="btn" id="nameBtn" type="button">Trace name</button>
     </div>
-    <p>[Grown-ups: pick a letter, then let your child trace it with a finger, starting at the red dot and following the dotted outline. Tap “Check my tracing” or wait a moment to see feedback. Great tracing unlocks the next letter. Names you type stay on this page and are not saved.]</p>
+    <p>Grown-ups: pick a letter, then let your child trace it with a finger, starting at the red dot and following the dotted outline. Tap &ldquo;Check my tracing&rdquo; or wait a moment to see feedback. Great tracing unlocks the next letter. Names you type stay on this page and are not saved.</p>
   </section>
 
   <section id="phonics">
@@ -602,7 +602,7 @@
       var tot = [1, 1, 2, 2][i], v = sc[i], msg = v === tot ? "Strong. Great job!" : v > 0 ? "Growing. A little more practice." : "Practice this one next.";
       h += "<li><h3>" + n + ": " + v + " of " + tot + "</h3><p>" + msg + "</p>" + (v < tot ? '<a class="btn" href="' + SKL[i] + '">Practice ' + n.toLowerCase() + "</a>" : "") + "</li>";
     });
-    h += '</ul><p class="small" style="margin-top:.75rem">This is a quick check, not an official test. [Write a note for grown-ups about what to do with these results.]</p>';
+    h += '</ul><p class="small" style="margin-top:.75rem">This is a quick check, not an official test. Grown-ups: use the Practice buttons to work on any skill that needs it, then try the quick check again in a few days. Nothing is saved on this page.</p>';
     qRes.innerHTML = h;
     qRes.hidden = false;
   }
