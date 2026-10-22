@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuestX Letters</title>
+<style>
+  :root {
+    --bg: #f7f5ef;
+    --ink: #2b3550;
+    --red: #d98a80;
+    --blue: #86abd2;
+    --yellow: #ebd07a;
+    --red-t: #f6dcd8;
+    --blue-t: #dce8f4;
+    --yellow-t: #f8efc9;
+    --font: "Arial Rounded MT Bold", "Trebuchet MS", Verdana, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 1.1rem; line-height: 1.55; }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 4px solid var(--ink); outline-offset: 3px; }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1rem; }
+
+  header { padding: 2rem 0 1.25rem; text-align: center; }
+  header h1 { margin: 0; font-size: clamp(2.6rem, 13vw, 4.5rem); line-height: 1; letter-spacing: .02em; }
+  header h1 span:nth-child(1) { color: var(--red); }
+  header h1 span:nth-child(2) { color: var(--blue); }
+  header h1 span:nth-child(3) { color: var(--yellow); }
+  header p { margin: .6rem 0 0; font-size: 1.15rem; }
+
+  nav { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 3px solid var(--ink); }
+  nav ul { list-style: none; margin: 0; padding: .6rem 1rem; display: flex; gap: .5rem; overflow-x: auto; }
+  nav a { display: block; white-space: nowrap; padding: .5rem 1rem; border: 3px solid var(--ink); border-radius: 2rem; color: var(--ink); text-decoration: none; background: #fff; }
+  nav li:nth-child(3n+1) a { background: var(--red-t); }
+  nav li:nth-child(3n+2) a { background: var(--blue-t); }
+  nav li:nth-child(3n) a { background: var(--yellow-t); }
+
+  section { scroll-margin-top: 4.5rem; margin: 1.75rem 0; padding: 1.25rem; border: 3px solid var(--ink); border-radius: 1.5rem; box-shadow: 0 6px 0 var(--ink); }
+  #books, #rhymes { background: var(--blue-t); }
+  #upper, #trace { background: var(--yellow-t); }
+  #lower, #phonics { background: var(--red-t); }
+  h2 { margin: 0 0 .5rem; font-size: 1.8rem; line-height: 1.2; }
+  h3 { margin: 0 0 .25rem; font-size: 1.15rem; }
+  p { margin: 0 0 .75rem; }
+
+  .list { list-style: none; margin: 0; padding: 0; display: grid; gap: .75rem; }
+  .list li { background: #fff; border: 3px solid var(--ink); border-radius: 1rem; padding: .8rem 1rem; }
+  .list p { margin: 0; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(3.5rem, 1fr)); gap: .5rem; margin: .75rem 0; }
+  .block { font: inherit; font-size: 1.8rem; line-height: 1; aspect-ratio: 1; border: 3px solid var(--ink); border-radius: .8rem; color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--ink); }
+  .block:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+  .block.c0 { background: var(--red); }
+  .block.c1 { background: var(--blue); }
+  .block.c2 { background: var(--yellow); }
+  .block.on { outline: 4px solid var(--ink); outline-offset: 2px; }
+  .mini { font-size: 1.4rem; }
+
+  .btn { font: inherit; display: inline-block; padding: .6rem 1.2rem; border: 3px solid var(--ink); border-radius: 2rem; background: #fff; color: var(--ink); cursor: pointer; text-decoration: none; box-shadow: 0 4px 0 var(--ink); }
+  .btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+
+  .stage { position: relative; width: 100%; aspect-ratio: 3 / 2; background: #fff; border: 3px solid var(--ink); border-radius: 1rem; overflow: hidden; margin: .75rem 0; }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  #draw { touch-action: none; cursor: crosshair; }
+  .row { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; margin-bottom: .75rem; }
+  label { display: block; margin-bottom: .25rem; }
+  input[type=text] { font: inherit; width: 100%; max-width: 12rem; padding: .55rem .8rem; border: 3px solid var(--ink); border-radius: 1rem; background: #fff; color: var(--ink); }
+
+  .big { display: flex; align-items: center; gap: 1rem; background: #fff; border: 3px solid var(--ink); border-radius: 1rem; padding: .75rem 1rem; margin: .75rem 0; }
+  .big strong { font-size: 3.5rem; line-height: 1; }
+
+  footer { padding: 1rem 0 2.5rem; text-align: center; }
+  h2 { display: flex; align-items: center; gap: .6rem; }
+  .mm { width: 2.8rem; height: 2.8rem; flex: none; }
+  .crew { display: flex; justify-content: center; gap: .75rem; margin-top: 1rem; }
+  .mh { width: clamp(4rem, 20vw, 6rem); height: clamp(4rem, 20vw, 6rem); }
+  .small { font-size: .95rem; }
+  .crew figure { margin: 0; text-align: center; }
+  .crew figcaption { font-weight: bold; font-size: 1.15rem; }
+  .list .btn { margin-top: .5rem; }
+  #gMsg, .gm { min-height: 1.6rem; font-weight: bold; }
+  #quiz { background: var(--blue-t); }
+  #games { background: var(--yellow-t); }
+  #qText { font-size: 1.3rem; min-height: 2rem; }
+  .qc { font-size: 1.6rem; min-width: 4.5rem; }
+  [hidden] { display: none !important; }
+  .rhyme { margin: 0 0 .25rem; }
+  section.fold > h2 { cursor: pointer; margin: 0; }
+  section.fold > h2::after { content: "\2212"; margin-left: auto; font-size: 2rem; line-height: 1; }
+  section.fold.closed > h2::after { content: "+"; }
+  section.fold:not(.closed) > h2 { margin-bottom: .6rem; }
+  section.fold.closed > :not(h2) { display: none; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="m-red" viewBox="0 0 100 100">
+    <path d="M22 38 L20 10 L44 26Z M78 38 L80 10 L56 26Z" fill="#d98a80" stroke="#2b3550" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="50" cy="58" r="38" fill="#d98a80" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="37" cy="52" r="5" fill="#2b3550"/><circle cx="63" cy="52" r="5" fill="#2b3550"/>
+    <circle cx="50" cy="62" r="3.5" fill="#2b3550"/>
+    <path d="M42 68 Q50 77 58 68" fill="none" stroke="#2b3550" stroke-width="4" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-blue" viewBox="0 0 100 100">
+    <circle cx="22" cy="26" r="13" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="78" cy="26" r="13" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="50" cy="56" r="38" fill="#86abd2" stroke="#2b3550" stroke-width="4"/>
+    <ellipse cx="50" cy="68" rx="17" ry="13" fill="#dce8f4" stroke="#2b3550" stroke-width="3"/>
+    <circle cx="37" cy="48" r="5" fill="#2b3550"/><circle cx="63" cy="48" r="5" fill="#2b3550"/>
+    <ellipse cx="50" cy="63" rx="5" ry="3.5" fill="#2b3550"/>
+    <path d="M44 72 Q50 78 56 72" fill="none" stroke="#2b3550" stroke-width="3" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="m-yellow" viewBox="0 0 100 100">
+    <path d="M42 22 Q44 6 50 4 Q56 6 58 22" fill="#ebd07a" stroke="#2b3550" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="50" cy="58" r="38" fill="#ebd07a" stroke="#2b3550" stroke-width="4"/>
+    <circle cx="36" cy="50" r="5" fill="#2b3550"/><circle cx="64" cy="50" r="5" fill="#2b3550"/>
+    <path d="M42 60 L58 60 L50 74Z" fill="#d98a80" stroke="#2b3550" stroke-width="3" stroke-linejoin="round"/>
+  </symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <h1 aria-label="QuestX"><span>Quest</span><span>X</span></h1>
+    <p>Tracing, sounds, books and games for 5-year-olds.</p>
+    <div class="crew">
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-red"/></svg><figcaption>Rosie</figcaption></figure>
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-blue"/></svg><figcaption>Bo</figcaption></figure>
+      <figure><svg class="mh" aria-hidden="true"><use href="#m-yellow"/></svg><figcaption>Pip</figcaption></figure>
+    </div>
+  </div>
+</header>
+
+<nav aria-label="Sections">
+  <ul>
+    <li><a href="#quiz">Quiz</a></li>
+    <li><a href="#games">Games</a></li>
+    <li><a href="#books">Books</a></li>
+    <li><a href="#upper">ABC</a></li>
+    <li><a href="#lower">abc</a></li>
+    <li><a href="#rhymes">Rhymes</a></li>
+    <li><a href="#trace">Tracing</a></li>
+    <li><a href="#phonics">Phonics</a></li>
+  </ul>
+</nav>
+
+<main class="wrap">
+
+  <section id="quiz">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Quick check</h2>
+    <p>Answer 6 quick questions. It is not a grade.</p>
+    <p class="small" id="qProg"></p>
+    <p id="qText"></p>
+    <div class="row" id="qChoices"></div>
+    <div class="row">
+      <button class="btn" id="qHear" type="button">Hear the question</button>
+      <button class="btn" id="qStart" type="button">Start the quick check</button>
+    </div>
+    <div id="qRes" hidden></div>
+  </section>
+
+  <section id="games">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Literacy games</h2>
+    <ul class="list">
+      <li id="gameBox">
+        <h3>Sound match</h3>
+        <p id="gQ">Press Start to play.</p>
+        <div class="row" id="gChoices"></div>
+        <p id="gMsg" aria-live="polite"></p>
+        <div class="row"><button class="btn" id="gHear" type="button">Hear the letter</button><button class="btn" id="gNext" type="button">Start</button></div>
+        <p class="small" id="gScore">Stars: 0</p>
+      </li>
+      <li id="gRhyme"><h3>Rhyme match</h3><p class="gq">Press Start to play.</p><div class="row gc"></div><p class="gm" aria-live="polite"></p><div class="row"><button class="btn gh" type="button">Hear it</button><button class="btn gn" type="button">Start</button></div><p class="small gs">Stars: 0</p></li>
+      <li id="gPair"><h3>Letter partners</h3><p class="gq">Press Start to play.</p><div class="row gc"></div><p class="gm" aria-live="polite"></p><div class="row"><button class="btn gh" type="button">Hear it</button><button class="btn gn" type="button">Start</button></div><p class="small gs">Stars: 0</p></li>
+    </ul>
+  </section>
+
+  <section id="books">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Books</h2>
+    <p>Free books for 5-year-olds that are in the public domain.</p>
+    <ul class="list">
+      <li><h3>The Tale of Peter Rabbit</h3><p>Beatrix Potter &ndash; A little rabbit sneaks into a garden and has to find his way home.</p><a class="btn" href="https://www.gutenberg.org/ebooks/14304" target="_blank" rel="noopener">Read it free</a></li>
+      <li><h3>The Story of the Three Little Pigs</h3><p>L. Leslie Brooke &ndash; Three pigs build three houses, and a wolf huffs and puffs.</p><a class="btn" href="https://www.gutenberg.org/ebooks/18155" target="_blank" rel="noopener">Read it free</a></li>
+      <li><h3>The Tale of Squirrel Nutkin</h3><p>Beatrix Potter &ndash; A cheeky red squirrel visits an island of nuts and a wise old owl.</p><a class="btn" href="https://www.gutenberg.org/ebooks/14872" target="_blank" rel="noopener">Read it free</a></li>
+    </ul>
+    <p class="small" style="margin-top:.75rem">Grown-ups: these links open Project Gutenberg, where each book is listed as public domain in the USA. [Check the copyright rules for your country.]</p>
+  </section>
+
+  <section id="upper">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-red"/></svg>Uppercase letters</h2>
+    <p>Tap a letter to pick it.</p>
+    <div class="grid" id="gridU"></div>
+    <a class="btn" href="#trace">Trace this letter</a>
+  </section>
+
+  <section id="lower">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Lowercase letters</h2>
+    <p>Tap a letter to pick it.</p>
+    <div class="grid" id="gridL"></div>
+    <a class="btn" href="#trace">Trace this letter</a>
+  </section>
+
+  <section id="rhymes">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-red"/></svg>Rhymes</h2>
+    <p>Old nursery rhymes that are in the public domain.</p>
+    <ul class="list">
+      <li><h3>Humpty Dumpty</h3><p class="rhyme">Humpty Dumpty sat on a wall,<br>Humpty Dumpty had a great fall.<br>All the king's horses and all the king's men<br>Couldn't put Humpty together again.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Twinkle, Twinkle, Little Star</h3><p class="rhyme">Twinkle, twinkle, little star,<br>How I wonder what you are!<br>Up above the world so high,<br>Like a diamond in the sky.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Jack and Jill</h3><p class="rhyme">Jack and Jill went up the hill<br>To fetch a pail of water.<br>Jack fell down and broke his crown,<br>And Jill came tumbling after.</p><button class="btn rh" type="button">Hear it</button></li>
+      <li><h3>Hickory Dickory Dock</h3><p class="rhyme">Hickory, dickory, dock!<br>The mouse ran up the clock.<br>The clock struck one,<br>The mouse ran down,<br>Hickory, dickory, dock.</p><button class="btn rh" type="button">Hear it</button></li>
+    </ul>
+  </section>
+
+  <section id="trace">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-blue"/></svg>Tracing center</h2>
+    <p id="now">Trace the letter: A</p>
+    <div class="stage">
+      <canvas id="guide" aria-hidden="true"></canvas>
+      <canvas id="draw" role="img" aria-label="Tracing area. Draw with your finger."></canvas>
+    </div>
+    <p id="tMsg" class="gm" aria-live="polite"></p>
+    <div class="row"><button class="btn" id="check" type="button">Check my tracing</button><button class="btn" id="clear" type="button">Start over</button></div>
+    <div id="nextBox" class="big" hidden>
+      <strong id="nextLetter"></strong>
+      <div>
+        <p id="nextTxt"></p>
+        <div class="row"><button class="btn" id="nextHear" type="button">Hear it</button><button class="btn" id="nextBtn" type="button">Trace it</button></div>
+      </div>
+    </div>
+    <label for="nameIn">Trace a name (up to 10 letters)</label>
+    <div class="row">
+      <input id="nameIn" type="text" maxlength="10" autocomplete="off" autocapitalize="words" spellcheck="false">
+      <button class="btn" id="nameBtn" type="button">Trace name</button>
+    </div>
+    <p>Grown-ups: pick a letter, then let your child trace it with a finger, starting at the red dot and following the dotted outline. Tap &ldquo;Check my tracing&rdquo; or wait a moment to see feedback. Great tracing unlocks the next letter. Names you type stay on this page and are not saved.</p>
+  </section>
+
+  <section id="phonics">
+    <h2><svg class="mm" aria-hidden="true"><use href="#m-yellow"/></svg>Phonics</h2>
+    <p>Pick a letter to learn its sound.</p>
+    <div class="grid" id="gridP"></div>
+    <div class="big">
+      <strong id="phLetter">Aa</strong>
+      <div>
+        <p id="phNote">[Write the sound for A and an example word.]</p>
+        <div class="row"><button class="btn" id="hear" type="button">Hear the letter</button><button class="btn" id="hearW" type="button">Hear the word</button></div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">Thank you! Made for STEMnovation.</div>
+</footer>
+
+<script>
+(function () {
+  var ALPHA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  var cur = "s", guide = "s";
+  var ORDER = "satipnckehrmdgoulfbjzwvyxq".split(""), nextCh = null;
+  var segs = [], timer = null, gfont = "", gfs = 0, gStart = null;
+  var SND = "a,b,k,d,e,f,g,h,i,j,k,l,m,n,o,p,kw,r,s,t,u,v,w,ks,y,z".split(",");
+  var WORDS = "apple,ball,cat,dog,egg,fish,goat,hat,igloo,jam,kite,lion,moon,nest,octopus,pig,queen,rabbit,sun,tiger,umbrella,van,web,x-ray,yak,zebra".split(",");
+  var UP = "clrlllrlcollllololrcllllll", LO = "rlrrmorlcclcllolrlrcllllll";
+  var START = { l: [0, 0], c: [.5, 0], r: [.85, .2], o: [.65, .05], m: [0, .5] };
+  function say(t) {
+    try {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(t);
+      u.rate = 0.8;
+      window.speechSynthesis.speak(u);
+    } catch (err) {}
+  }
+  var gc = document.getElementById("guide"), dc = document.getElementById("draw");
+  var g = gc.getContext("2d"), d = dc.getContext("2d");
+
+  function buildGrid(id, lower, mini) {
+    var box = document.getElementById(id);
+    ALPHA.forEach(function (L, i) {
+      var ch = lower ? L.toLowerCase() : L;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "block c" + (i % 3) + (mini ? " mini" : "");
+      b.textContent = ch;
+      b.setAttribute("aria-label", (lower ? "Lowercase " : "Uppercase ") + L);
+      b.addEventListener("click", function () { pick(ch); });
+      box.appendChild(b);
+    });
+  }
+
+  function drawGuide() {
+    var w = gc.clientWidth, h = gc.clientHeight, fs = h * 0.85;
+    var font = function (s) { return "bold " + s + "px 'Arial Rounded MT Bold', 'Trebuchet MS', Verdana, sans-serif"; };
+    g.clearRect(0, 0, w, h);
+    g.font = font(fs);
+    var m = g.measureText(guide).width;
+    if (m > w * 0.92) { fs = fs * w * 0.92 / m; g.font = font(fs); }
+    gfont = g.font;
+    gfs = fs;
+    g.textAlign = "center";
+    g.textBaseline = "middle";
+    g.fillStyle = "#f1ece0";
+    g.fillText(guide, w / 2, h / 2);
+    g.setLineDash([2, 12]);
+    g.lineWidth = 4;
+    g.lineCap = "round";
+    g.strokeStyle = "#7d879e";
+    g.strokeText(guide, w / 2, h / 2);
+    gStart = null;
+    if (guide.length === 1) {
+      var up = guide === guide.toUpperCase();
+      var f = START[(up ? UP : LO).charAt(ALPHA.indexOf(guide.toUpperCase()))];
+      var mm = g.measureText(guide);
+      var L = w / 2 - mm.actualBoundingBoxLeft, R = w / 2 + mm.actualBoundingBoxRight;
+      var T = h / 2 - mm.actualBoundingBoxAscent, B = h / 2 + mm.actualBoundingBoxDescent;
+      var x = L + f[0] * (R - L), y = T + f[1] * (B - T);
+      gStart = [x, y];
+      g.setLineDash([]);
+      g.beginPath();
+      g.arc(x, y, 14, 0, Math.PI * 2);
+      g.fillStyle = "#d98a80";
+      g.fill();
+      g.lineWidth = 3;
+      g.strokeStyle = "#2b3550";
+      g.stroke();
+      g.fillStyle = "#2b3550";
+      g.font = "bold 16px Arial, sans-serif";
+      g.fillText("1", x, y + 1);
+    }
+  }
+
+  function size() {
+    segs = [];
+    var r = gc.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    [gc, dc].forEach(function (c) {
+      c.width = Math.round(r.width * dpr);
+      c.height = Math.round(r.height * dpr);
+    });
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    d.setTransform(dpr, 0, 0, dpr, 0, 0);
+    d.lineWidth = 14;
+    d.lineCap = "round";
+    d.lineJoin = "round";
+    d.strokeStyle = "#4f7fb0";
+    drawGuide();
+  }
+
+  function clearDraw() {
+    d.clearRect(0, 0, dc.clientWidth, dc.clientHeight);
+    segs = [];
+    clearTimeout(timer);
+    document.getElementById("tMsg").textContent = "";
+    document.getElementById("nextBox").hidden = true;
+  }
+
+  function soundNote(U) {
+    var i = ALPHA.indexOf(U);
+    return U === "X" ? "X makes the sound /ks/, like at the end of box." : U + " makes the sound /" + SND[i] + "/, like in " + WORDS[i] + ".";
+  }
+
+  function showNext() {
+    if (guide.length !== 1) return;
+    var k = ORDER.indexOf(guide.toLowerCase()), up = guide === guide.toUpperCase();
+    if (k < 0) return;
+    var last = k === ORDER.length - 1;
+    nextCh = last ? null : (up ? ORDER[k + 1].toUpperCase() : ORDER[k + 1]);
+    document.getElementById("nextLetter").textContent = last ? "\u2605" : nextCh;
+    document.getElementById("nextTxt").textContent = last ? "You traced every letter! Amazing!" : "Meet the next letter! " + soundNote(nextCh.toUpperCase());
+    document.getElementById("nextHear").hidden = last;
+    document.getElementById("nextBtn").hidden = last;
+    document.getElementById("nextBox").hidden = false;
+  }
+
+  function traceScore() {
+    var w = gc.clientWidth, h = gc.clientHeight, S = 0.3;
+    function mk() {
+      var c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(w * S));
+      c.height = Math.max(1, Math.round(h * S));
+      var x = c.getContext("2d");
+      x.setTransform(S, 0, 0, S, 0, 0);
+      x.lineCap = "round";
+      x.lineJoin = "round";
+      x.font = gfont;
+      x.textAlign = "center";
+      x.textBaseline = "middle";
+      x.fillStyle = "#000";
+      x.strokeStyle = "#000";
+      return x;
+    }
+    function ink(x, lw) {
+      x.lineWidth = lw;
+      segs.forEach(function (q) { x.beginPath(); x.moveTo(q[0], q[1]); x.lineTo(q[2], q[3]); x.stroke(); });
+    }
+    function px(x) { var c = x.canvas; return x.getImageData(0, 0, c.width, c.height).data; }
+    var L = mk(), K = mk(), Z = mk(), T = mk(), F = mk(), O = mk();
+    L.fillText(guide, w / 2, h / 2);
+    K.fillText(guide, w / 2, h / 2);
+    K.globalCompositeOperation = "destination-out";
+    K.lineWidth = gfs * 0.09;
+    K.strokeText(guide, w / 2, h / 2);
+    Z.fillText(guide, w / 2, h / 2);
+    Z.lineWidth = gfs * 0.12;
+    Z.strokeText(guide, w / 2, h / 2);
+    O.lineWidth = 1 / S;
+    O.strokeText(guide, w / 2, h / 2);
+    ink(T, 6);
+    ink(F, gfs * 0.13 + 14);
+    var k = px(K), l = px(L), z = px(Z), t = px(T), f = px(F), core = 0, cov = 0, inkN = 0, inZ = 0, i;
+    for (i = 3; i < k.length; i += 4) if (k[i] > 40) core++;
+    var tgt = core < 20 ? l : k;
+    core = 0;
+    for (i = 3; i < tgt.length; i += 4) {
+      if (tgt[i] > 40) { core++; if (f[i] > 40) cov++; }
+      if (t[i] > 40) { inkN++; if (z[i] > 40) inZ++; }
+    }
+    var o = px(O), oc = 0, len = 0;
+    for (i = 3; i < o.length; i += 4) if (o[i] > 40) oc++;
+    segs.forEach(function (q) { len += Math.hypot(q[2] - q[0], q[3] - q[1]); });
+    return { c: core ? cov / core : 0, acc: inkN ? inZ / inkN : 0, len: len, outLen: oc / S };
+  }
+
+  function evalTrace() {
+    var msg = document.getElementById("tMsg");
+    if (!segs.length) { msg.textContent = "Use your finger to trace the letter."; return; }
+    var r = traceScore();
+    if (gStart && Math.hypot(segs[0][0] - gStart[0], segs[0][1] - gStart[1]) > 45) msg.textContent = "Start at the red dot!";
+    else if (r.len > 3 * r.outLen) msg.textContent = "Slow down! Follow the dots.";
+    else if (r.c >= 0.9 && r.acc >= 0.93) { msg.textContent = "\u2605 Great tracing! You did it!"; say("Great job!"); showNext(); }
+    else if (r.acc < 0.85) msg.textContent = "Good try! Stay on the dots.";
+    else if (r.c < 0.9) msg.textContent = "Keep going! Follow all the dots.";
+    else msg.textContent = "Nice! Try again, slow and neat.";
+  }
+
+  function pick(ch) {
+    cur = ch;
+    guide = ch;
+    document.querySelectorAll(".block").forEach(function (b) {
+      var on = b.textContent === ch;
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    var U = ch.toUpperCase();
+    document.getElementById("phLetter").textContent = U + U.toLowerCase();
+    var i = ALPHA.indexOf(U);
+    document.getElementById("phNote").textContent = U === "X" ? "X makes the sound /ks/, like at the end of box." : U + " makes the sound /" + SND[i] + "/, like in " + WORDS[i] + ".";
+    document.getElementById("now").textContent = "Trace the letter: " + ch + ". Start at the red dot.";
+    clearDraw();
+    drawGuide();
+  }
+
+  var down = false, last = null;
+  function pos(e) { var r = dc.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  dc.addEventListener("pointerdown", function (e) {
+    down = true;
+    dc.setPointerCapture(e.pointerId);
+    last = pos(e);
+    d.beginPath();
+    d.moveTo(last[0], last[1]);
+    d.lineTo(last[0] + 0.1, last[1]);
+    d.stroke();
+    segs.push([last[0], last[1], last[0] + 0.1, last[1]]);
+    clearTimeout(timer);
+    e.preventDefault();
+  });
+  dc.addEventListener("pointermove", function (e) {
+    if (!down) return;
+    var p = pos(e);
+    d.beginPath();
+    d.moveTo(last[0], last[1]);
+    d.lineTo(p[0], p[1]);
+    d.stroke();
+    segs.push([last[0], last[1], p[0], p[1]]);
+    last = p;
+  });
+  ["pointerup", "pointercancel"].forEach(function (ev) {
+    dc.addEventListener(ev, function () {
+      if (!down) return;
+      down = false;
+      clearTimeout(timer);
+      timer = setTimeout(evalTrace, 900);
+    });
+  });
+
+  document.getElementById("clear").addEventListener("click", clearDraw);
+  document.getElementById("nextBtn").addEventListener("click", function () { if (nextCh) pick(nextCh); });
+  document.getElementById("nextHear").addEventListener("click", function () {
+    if (nextCh) say(nextCh.toUpperCase() + ". " + WORDS[ALPHA.indexOf(nextCh.toUpperCase())]);
+  });
+  document.getElementById("check").addEventListener("click", function () { clearTimeout(timer); evalTrace(); });
+
+  document.getElementById("nameBtn").addEventListener("click", function () {
+    var v = document.getElementById("nameIn").value.replace(/[^A-Za-z]/g, "").slice(0, 10);
+    if (!v) return;
+    v = v.charAt(0).toUpperCase() + v.slice(1).toLowerCase();
+    guide = v;
+    document.getElementById("now").textContent = "Trace the name: " + v;
+    clearDraw();
+    drawGuide();
+  });
+
+  document.getElementById("hear").addEventListener("click", function () { say(cur.toUpperCase()); });
+  document.getElementById("hearW").addEventListener("click", function () { say(WORDS[ALPHA.indexOf(cur.toUpperCase())]); });
+
+  var target = 0, score = 0, solved = false;
+  var gQ = document.getElementById("gQ"), gMsg = document.getElementById("gMsg"), gCh = document.getElementById("gChoices"), gNext = document.getElementById("gNext");
+  function round() {
+    target = Math.floor(Math.random() * 26);
+    solved = false;
+    var opts = [target];
+    while (opts.length < 3) {
+      var r = Math.floor(Math.random() * 26);
+      if (opts.indexOf(r) < 0) opts.push(r);
+    }
+    opts.sort(function () { return Math.random() - 0.5; });
+    gCh.innerHTML = "";
+    opts.forEach(function (n) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn";
+      b.textContent = WORDS[n];
+      b.addEventListener("click", function () {
+        say(WORDS[n]);
+        if (n === target) {
+          if (!solved) { score++; solved = true; }
+          gMsg.textContent = "Yes! " + ALPHA[target] + " is for " + WORDS[target] + ".";
+          document.getElementById("gScore").textContent = "Stars: " + score;
+        } else {
+          gMsg.textContent = "Try again!";
+        }
+      });
+      gCh.appendChild(b);
+    });
+    gQ.textContent = "Which word starts with the letter " + ALPHA[target] + "?";
+    gMsg.textContent = "";
+    gNext.textContent = "Next";
+  }
+  gNext.addEventListener("click", round);
+  document.getElementById("gHear").addEventListener("click", function () { say(ALPHA[target]); });
+
+  document.querySelectorAll(".rh").forEach(function (b) {
+    b.addEventListener("click", function () { say(b.previousElementSibling.innerText); });
+  });
+
+  var RH = [["cat","hat","dog","sun"],["pig","wig","cup","bed"],["moon","spoon","tree","fish"],["bug","rug","hat","pen"],["bell","shell","car","box"]];
+  var SK = ["Uppercase letters", "Lowercase letters", "Letter sounds", "Rhymes"], SKL = ["#upper", "#lower", "#phonics", "#rhymes"];
+  var qs = [], qi = 0, sc = [0, 0, 0, 0];
+  var qProg = document.getElementById("qProg"), qText = document.getElementById("qText"), qCh = document.getElementById("qChoices"), qRes = document.getElementById("qRes");
+  function rnd(n) { return Math.floor(Math.random() * n); }
+  function shuf(a) { return a.sort(function () { return Math.random() - 0.5; }); }
+  function pickN(n, skip) {
+    var o = [];
+    while (o.length < n) { var r = rnd(26); if (skip.indexOf(r) < 0 && o.indexOf(r) < 0) o.push(r); }
+    return o;
+  }
+  function buildQuiz() {
+    qs = [];
+    [0, 1].forEach(function (k) {
+      pickN(1, []).forEach(function (t) {
+        var ch = function (n) { return k ? ALPHA[n].toLowerCase() : ALPHA[n]; };
+        qs.push({ s: k, text: "Tap the letter " + ch(t) + ".", say: "Tap the letter " + ALPHA[t], opts: shuf([t].concat(pickN(2, [t]))).map(ch), ans: ch(t) });
+      });
+    });
+    pickN(2, [23]).forEach(function (t) {
+      qs.push({ s: 2, text: "Which letter does \"" + WORDS[t] + "\" start with?", say: "Which letter does " + WORDS[t] + " start with?", opts: shuf([t].concat(pickN(2, [t]))).map(function (n) { return ALPHA[n]; }), ans: ALPHA[t] });
+    });
+    shuf(RH.slice()).slice(0, 2).forEach(function (r) {
+      var o = shuf(r.slice(1));
+      qs.push({ s: 3, text: "Which word rhymes with " + r[0] + "?", say: "Which word rhymes with " + r[0] + "? " + o.join(", "), opts: o, ans: r[1] });
+    });
+    shuf(qs);
+  }
+  function showQ() {
+    var q = qs[qi];
+    qProg.textContent = "Question " + (qi + 1) + " of " + qs.length;
+    qText.textContent = q.text;
+    qCh.innerHTML = "";
+    q.opts.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "btn qc";
+      b.textContent = o;
+      b.addEventListener("click", function () {
+        if (o === q.ans) sc[q.s]++;
+        qi++;
+        if (qi < qs.length) showQ(); else finishQ();
+      });
+      qCh.appendChild(b);
+    });
+  }
+  function finishQ() {
+    qProg.textContent = "All done! Great work.";
+    qText.textContent = "";
+    qCh.innerHTML = "";
+    var h = '<ul class="list" style="margin-top:.75rem">';
+    SK.forEach(function (n, i) {
+      var tot = [1, 1, 2, 2][i], v = sc[i], msg = v === tot ? "Strong. Great job!" : v > 0 ? "Growing. A little more practice." : "Practice this one next.";
+      h += "<li><h3>" + n + ": " + v + " of " + tot + "</h3><p>" + msg + "</p>" + (v < tot ? '<a class="btn" href="' + SKL[i] + '">Practice ' + n.toLowerCase() + "</a>" : "") + "</li>";
+    });
+    h += '</ul><p class="small" style="margin-top:.75rem">This is a quick check, not an official test. Grown-ups: use the Practice buttons to work on any skill that needs it, then try the quick check again in a few days. Nothing is saved on this page.</p>';
+    qRes.innerHTML = h;
+    qRes.hidden = false;
+  }
+  document.getElementById("qStart").addEventListener("click", function () {
+    buildQuiz();
+    qi = 0;
+    sc = [0, 0, 0, 0];
+    qRes.hidden = true;
+    this.textContent = "Start over";
+    showQ();
+  });
+  document.getElementById("qHear").addEventListener("click", function () { if (qs[qi]) say(qs[qi].say); });
+
+  function game(id, gen) {
+    var box = document.getElementById(id), q = box.querySelector(".gq"), ch = box.querySelector(".gc"), msg = box.querySelector(".gm");
+    var nx = box.querySelector(".gn"), hr = box.querySelector(".gh"), sc = box.querySelector(".gs");
+    var stars = 0, cur = null, done = false;
+    function next() {
+      cur = gen();
+      done = false;
+      ch.innerHTML = "";
+      cur.opts.forEach(function (o) {
+        var b = document.createElement("button");
+        b.type = "button";
+        b.className = "btn qc";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          say(o);
+          if (o === cur.ans) {
+            if (!done) { stars++; done = true; }
+            msg.textContent = cur.ok;
+            sc.textContent = "Stars: " + stars;
+          } else {
+            msg.textContent = "Try again!";
+          }
+        });
+        ch.appendChild(b);
+      });
+      q.textContent = cur.text;
+      msg.textContent = "";
+      nx.textContent = "Next";
+    }
+    nx.addEventListener("click", next);
+    hr.addEventListener("click", function () { if (cur) say(cur.say); });
+  }
+  game("gRhyme", function () {
+    var r = RH[rnd(RH.length)], o = shuf(r.slice(1)), t = "Which word rhymes with " + r[0] + "?";
+    return { text: t, say: t + " " + o.join(", "), opts: o, ans: r[1], ok: "Yes! " + r[0] + " rhymes with " + r[1] + "." };
+  });
+  game("gPair", function () {
+    var t = rnd(26), lo = function (n) { return ALPHA[n].toLowerCase(); };
+    return { text: "Find the little letter that goes with " + ALPHA[t] + ".", say: "Find the lowercase letter that goes with " + ALPHA[t], opts: shuf([t].concat(pickN(2, [t]))).map(lo), ans: lo(t), ok: "Yes! " + ALPHA[t] + " and " + lo(t) + " are partners." };
+  });
+
+  buildGrid("gridU", false, false);
+  buildGrid("gridL", true, false);
+  buildGrid("gridP", false, true);
+  function openSec(sec, open) {
+    sec.classList.toggle("closed", !open);
+    sec.firstElementChild.setAttribute("aria-expanded", open ? "true" : "false");
+    if (open && sec.id === "trace") size();
+  }
+  document.querySelectorAll("section").forEach(function (sec) {
+    var h = sec.firstElementChild;
+    sec.classList.add("fold");
+    h.setAttribute("role", "button");
+    h.setAttribute("tabindex", "0");
+    openSec(sec, sec.id === "quiz");
+    function tog() { openSec(sec, sec.classList.contains("closed")); }
+    h.addEventListener("click", tog);
+    h.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); tog(); }
+    });
+  });
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+    var sec = document.getElementById(a.getAttribute("href").slice(1));
+    if (sec && sec.classList.contains("fold")) openSec(sec, true);
+  });
+  window.addEventListener("resize", size);
+  size();
+  pick("s");
+})();
+</script>
+
+</body>
+</html>
